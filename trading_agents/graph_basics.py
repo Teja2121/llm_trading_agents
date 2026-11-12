@@ -23,7 +23,7 @@ def bear(state: DebateState) -> dict:
     }
 
 
-MAX_ROUNDS = 2
+MAX_ROUNDS = 4
 
 
 def should_continue(state: DebateState) -> str:
