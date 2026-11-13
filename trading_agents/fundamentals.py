@@ -52,7 +52,6 @@ def build_fundamental_facts(
         "profit_margin_pct": _pct(snapshot.get("profit_margin")),
         "revenue_growth_yoy_pct_per_yahoo": _pct(snapshot.get("revenue_growth")),
         "pct_below_52w_high": _yoy(price, high52) and round(-_yoy(price, high52), 2),
-        "pct_vs_analyst_target": _yoy(price, target),
         "latest_quarter_end": latest.get("fiscal_date"),
         "latest_quarter_revenue_billions_usd": _billions(latest.get("revenue")),
         "revenue_yoy_pct": revenue_yoy,

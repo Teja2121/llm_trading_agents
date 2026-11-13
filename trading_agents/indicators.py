@@ -4,6 +4,16 @@ import pandas as pd
 def _r(x) -> float:
     return round(float(x), 2)
 
+def compute_market_stress(prices: list[dict]) -> dict:
+    """Broad-market conditions, from SPY prices."""
+    close = pd.DataFrame(prices)["close"]
+    last = close.iloc[-1]
+    return {
+        "market_proxy": "SPY",
+        "return_5d_pct": _r((last / close.iloc[-6] - 1) * 100),
+        "drawdown_from_20d_high_pct": _r((last / close.tail(20).max() - 1) * 100),
+        "volatility_20d_daily_pct": _r(close.pct_change().tail(20).std() * 100),
+    }
 
 def compute_indicators(prices: list[dict]) -> dict:
     """Turn raw OHLCV rows into the handful of numbers a technical analyst uses."""

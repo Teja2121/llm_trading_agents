@@ -6,7 +6,7 @@ from trading_agents.alphavantage import AlphaVantageClient
 from trading_agents.analysts import fundamental_analyst, news_analyst, technical_analyst
 from trading_agents.debate import bear_node, bull_node, judge_node, should_continue
 from trading_agents.fundamentals import build_fundamental_facts
-from trading_agents.indicators import compute_indicators
+from trading_agents.indicators import compute_indicators, compute_market_stress
 from trading_agents.state import TradingState
 from trading_agents.yahoo import YahooClient
 from trading_agents.trading import risk_node, trader_node
@@ -25,11 +25,14 @@ def load_data(state: TradingState) -> dict:
         av.income_statement(ticker, quarters=5),
         price=indicators["close"],
     )
+    market = compute_market_stress(av.daily_prices("SPY"))
+
     return {
         "company": snapshot["name"],
         "indicators": indicators,
         "facts": facts,
         "headlines": yc.news(ticker, limit=15),
+        "market": market
     }
 
 

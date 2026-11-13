@@ -29,7 +29,7 @@ def compute_risk_limits(indicators: dict, equity: float) -> dict:
     }
 
 
-def risk_flags(indicators: dict, facts: dict) -> list[str]:
+def risk_flags(indicators: dict, facts: dict, market: dict) -> list[str]:
     """Plain-English warning signs, computed in code so none can be missed."""
     flags = []
     vol = indicators["volume_vs_20d_avg"]
@@ -50,4 +50,10 @@ def risk_flags(indicators: dict, facts: dict) -> list[str]:
     below_high = facts.get("pct_below_52w_high")
     if below_high is not None and below_high < 3:
         flags.append(f"within {below_high}% of 52-week high")
+    if market["return_5d_pct"] < -3:
+        flags.append(f"market selloff (SPY {market['return_5d_pct']}% over 5 days)")
+    if market["drawdown_from_20d_high_pct"] < -5:
+        flags.append(
+            f"market drawdown (SPY {market['drawdown_from_20d_high_pct']}% below its 20-day high)"
+        )
     return flags

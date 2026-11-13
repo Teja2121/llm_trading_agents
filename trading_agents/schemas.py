@@ -24,6 +24,10 @@ class NewsReport(AnalystReport):
     ignored_count: int = Field(
         description="How many headlines were off-topic, generic or promotional and ignored"
     )
+    market_context: str = Field(
+        description="One sentence on any market-wide or sector-wide event in the headlines that "
+        "affects risk (for example a broad selloff), or 'none'"
+    )
 
 class DebateOutcome(BaseModel):
     leaning: Literal["bullish", "bearish", "neutral"] = Field(

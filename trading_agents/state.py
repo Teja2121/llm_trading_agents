@@ -10,6 +10,7 @@ class TradingState(TypedDict):
     company: str
     indicators: dict
     facts: dict
+    market: dict
     headlines: list[dict]
     # analyst outputs (each written by exactly one node)
     technical_report: AnalystReport

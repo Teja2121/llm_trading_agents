@@ -29,7 +29,7 @@ Your confidence cannot exceed the research director's conviction."""
 def risk_node(state: TradingState) -> dict:
     print("-> risk manager")
     limits = compute_risk_limits(state["indicators"], state["equity"])
-    flags = risk_flags(state["indicators"], state["facts"])
+    flags = risk_flags(state["indicators"], state["facts"], state["market"])
 
     llm = get_llm(temperature=0.2).with_structured_output(RiskAssessment)
     prompt = (
@@ -37,6 +37,7 @@ def risk_node(state: TradingState) -> dict:
         f"Research verdict:\n{state['outcome'].model_dump_json(indent=2)}\n\n"
         f"Risk flags (computed in code): {flags or 'none'}\n\n"
         f"Hard limits (computed in code):\n{json.dumps(limits, indent=2)}\n\n"
+        f"Market conditions (SPY, computed in code):\n{json.dumps(state['market'], indent=2)}\n\n"
         f"Analyst reports:\n{reports_text(state)}"
     )
     assessment = llm.invoke([("system", RISK_SYSTEM), ("human", prompt)])
