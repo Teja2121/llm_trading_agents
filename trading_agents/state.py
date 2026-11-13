@@ -1,7 +1,7 @@
 import operator
 from typing import Annotated, TypedDict
 
-from trading_agents.schemas import AnalystReport, DebateOutcome, NewsReport
+from trading_agents.schemas import AnalystReport, DebateOutcome, NewsReport, RiskAssessment, FinalDecision
 
 
 class TradingState(TypedDict):
@@ -21,3 +21,12 @@ class TradingState(TypedDict):
     max_rounds: int
     # verdict
     outcome: DebateOutcome
+    # portfolio inputs
+    equity: float
+    position_shares: int
+    # risk and decision
+    risk_limits: dict
+    risk_flags: list[str]
+    risk_assessment: RiskAssessment
+    adjustments: Annotated[list[str], operator.add]  # every code override, for the log
+    decision: FinalDecision

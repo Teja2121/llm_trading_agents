@@ -38,3 +38,37 @@ class DebateOutcome(BaseModel):
     unresolved_questions: list[str] = Field(
         description="1 to 3 things the available data could not settle"
     )
+
+class RiskAssessment(BaseModel):
+    risk_level: Literal["low", "medium", "high"] = Field(
+        description="Overall risk of holding a position now"
+    )
+    size: Literal["none", "quarter", "half", "full"] = Field(
+        description="Fraction of the maximum allowed position to use; 'none' means do not trade"
+    )
+    main_risks: list[str] = Field(description="1 to 3 risks, each citing a specific number")
+    rationale: str = Field(description="2 sentences explaining the sizing choice")
+
+
+class TradeDecision(BaseModel):
+    action: Literal["BUY", "SELL", "HOLD"]
+    confidence: float = Field(description="0.0 to 1.0")
+    rationale: str = Field(
+        description="2-3 sentences linking the debate verdict and risk assessment to the action"
+    )
+
+
+class FinalDecision(BaseModel):
+    """Built by code (not the LLM) after all guards have run."""
+
+    ticker: str
+    action: Literal["BUY", "SELL", "HOLD"]
+    shares: int
+    entry_price: float
+    stop_loss_price: float | None
+    take_profit_price: float | None
+    position_value: float
+    risk_amount: float
+    confidence: float
+    risk_level: str
+    rationale: str

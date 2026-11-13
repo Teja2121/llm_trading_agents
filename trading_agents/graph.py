@@ -9,6 +9,7 @@ from trading_agents.fundamentals import build_fundamental_facts
 from trading_agents.indicators import compute_indicators
 from trading_agents.state import TradingState
 from trading_agents.yahoo import YahooClient
+from trading_agents.trading import risk_node, trader_node
 
 
 def load_data(state: TradingState) -> dict:
@@ -59,6 +60,8 @@ def build_graph():
     g.add_node("bull", bull_node)
     g.add_node("bear", bear_node)
     g.add_node("judge", judge_node)
+    g.add_node("risk", risk_node)
+    g.add_node("trader", trader_node)
 
     g.add_edge(START, "load_data")
     for analyst in ("technical", "fundamental", "news"):
@@ -66,7 +69,9 @@ def build_graph():
     g.add_edge(["technical", "fundamental", "news"], "bull")  # fan-in: wait for all
     g.add_edge("bull", "bear")
     g.add_conditional_edges("bear", should_continue, {"again": "bull", "done": "judge"})
-    g.add_edge("judge", END)
+    g.add_edge("judge", "risk")
+    g.add_edge("risk", "trader")
+    g.add_edge("trader", END)
     return g.compile()
 
 
@@ -74,12 +79,31 @@ if __name__ == "__main__":
     ticker = sys.argv[1] if len(sys.argv) > 1 else "AAPL"
     app = build_graph()
     final = app.invoke(
-        {"ticker": ticker, "debate": [], "round": 0, "max_rounds": 2}
+        {
+            "ticker": ticker,
+            "debate": [],
+            "adjustments": [],
+            "round": 0,
+            "max_rounds": 2,
+            "equity": 100_000.0,   # paper money
+            "position_shares": 0,  # start flat
+        }
     )
 
     print("\n=== DEBATE ===")
     for line in final["debate"]:
         print("\n" + line)
 
-    print("\n=== OUTCOME ===")
+    print("\n=== VERDICT ===")
     print(final["outcome"].model_dump_json(indent=2))
+
+    print("\n=== RISK ===")
+    print("flags:", final["risk_flags"])
+    print("limits:", final["risk_limits"])
+    print(final["risk_assessment"].model_dump_json(indent=2))
+
+    print("\n=== CODE ADJUSTMENTS ===")
+    print(final["adjustments"] or "none")
+
+    print("\n=== FINAL DECISION ===")
+    print(final["decision"].model_dump_json(indent=2))
