@@ -74,6 +74,13 @@ def get_decision(decision_id: int) -> sqlite3.Row | None:
             "SELECT * FROM decisions WHERE id = ?", (decision_id,)
         ).fetchone()
 
+def format_row(r) -> str:
+    return (
+        f"#{r['id']:<3} {r['run_at'][:19]}  {r['ticker']:<6} {r['action']:<4} "
+        f"x{r['shares']:<4} @ {r['entry_price']:<8} conf={r['confidence']} "
+        f"verdict={r['verdict_leaning']}({r['verdict_conviction']}) "
+        f"result={r['outcome_label'] or 'pending'}"
+    )
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:  # python -m trading_agents.decision_log 3
@@ -87,9 +94,4 @@ if __name__ == "__main__":
         if not rows:
             print("No decisions logged yet.")
         for r in rows:
-            print(
-                f"#{r['id']:<3} {r['run_at'][:19]}  {r['ticker']:<6} {r['action']:<4} "
-                f"x{r['shares']:<4} @ {r['entry_price']:<8} conf={r['confidence']} "
-                f"verdict={r['verdict_leaning']}({r['verdict_conviction']}) "
-                f"result={r['outcome_label'] or 'pending'}"
-            )
+            print(format_row(r))

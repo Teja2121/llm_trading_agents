@@ -18,7 +18,12 @@ Be skeptical: one 5-day result is mostly noise. Prefer worth_keeping=false unles
 specific signal or warning that the outcome plausibly relates to (for example a flag that was ignored,
 or a signal that misled).
 Write the lesson as a hypothesis tied to the numbers involved. Never claim certainty.
-Never recommend specific trades."""
+Never recommend specific trades.
+Maximum 40 words per lesson. Use only information that was visible at decision time. Do not call a signal a
+missed warning unless it was clearly adverse then (an RSI of 63 is not close to overbought, and a positive
+MACD histogram is not a bearish signal). Lessons from a loss are not more valuable than lessons from a gain
+or a missed opportunity. Prefer worth_keeping=false when the cause could simply be normal price noise, such
+as a stop being touched by an ordinary move."""
 
 
 def _summary(state: dict) -> str:
