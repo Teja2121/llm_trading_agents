@@ -12,6 +12,29 @@ CREATE TABLE IF NOT EXISTS api_cache (
     payload    TEXT NOT NULL,
     fetched_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS decisions (
+    id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+    run_at             TEXT NOT NULL,
+    ticker             TEXT NOT NULL,
+    model              TEXT NOT NULL,
+    action             TEXT NOT NULL,
+    shares             INTEGER NOT NULL,
+    entry_price        REAL NOT NULL,
+    stop_loss_price    REAL,
+    take_profit_price  REAL,
+    confidence         REAL NOT NULL,
+    risk_level         TEXT NOT NULL,
+    verdict_leaning    TEXT NOT NULL,
+    verdict_conviction REAL NOT NULL,
+    rationale          TEXT NOT NULL,
+    state_json         TEXT NOT NULL,
+    evaluated_at       TEXT,
+    eval_price         REAL,
+    return_pct         REAL,
+    outcome_label      TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_decisions_ticker_time ON decisions (ticker, run_at);
 """
 
 

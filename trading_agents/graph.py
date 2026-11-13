@@ -10,6 +10,7 @@ from trading_agents.indicators import compute_indicators
 from trading_agents.state import TradingState
 from trading_agents.yahoo import YahooClient
 from trading_agents.trading import risk_node, trader_node
+from trading_agents.decision_log import log_node
 
 
 def load_data(state: TradingState) -> dict:
@@ -62,6 +63,7 @@ def build_graph():
     g.add_node("judge", judge_node)
     g.add_node("risk", risk_node)
     g.add_node("trader", trader_node)
+    g.add_node("log", log_node)
 
     g.add_edge(START, "load_data")
     for analyst in ("technical", "fundamental", "news"):
@@ -71,7 +73,8 @@ def build_graph():
     g.add_conditional_edges("bear", should_continue, {"again": "bull", "done": "judge"})
     g.add_edge("judge", "risk")
     g.add_edge("risk", "trader")
-    g.add_edge("trader", END)
+    g.add_edge("trader", "log")
+    g.add_edge("log", END)
     return g.compile()
 
 

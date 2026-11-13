@@ -30,3 +30,4 @@ class TradingState(TypedDict):
     risk_assessment: RiskAssessment
     adjustments: Annotated[list[str], operator.add]  # every code override, for the log
     decision: FinalDecision
+    decision_id: int
