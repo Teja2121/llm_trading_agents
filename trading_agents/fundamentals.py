@@ -34,6 +34,9 @@ def build_fundamental_facts(
     target = snapshot.get("analyst_target")
     high52 = snapshot.get("week52_high")
 
+    revenue_yoy = _yoy(latest.get("revenue"), year_ago.get("revenue"))
+    pe = snapshot.get("trailing_pe")
+
     return {
         "company": snapshot.get("name"),
         "sector": snapshot.get("sector"),
@@ -52,7 +55,11 @@ def build_fundamental_facts(
         "pct_vs_analyst_target": _yoy(price, target),
         "latest_quarter_end": latest.get("fiscal_date"),
         "latest_quarter_revenue_billions_usd": _billions(latest.get("revenue")),
-        "revenue_yoy_pct": _yoy(latest.get("revenue"), year_ago.get("revenue")),
+        "revenue_yoy_pct": revenue_yoy,
+        "pe_to_revenue_growth_ratio": (
+            round(pe / revenue_yoy, 2) if pe and revenue_yoy and revenue_yoy > 0 else None
+        ),
+        "price_above_analyst_target_pct": _yoy(price, target),
         "net_income_yoy_pct": _yoy(latest.get("net_income"), year_ago.get("net_income")),
         "net_margin_latest_quarter_pct": (
             round(latest["net_income"] / latest["revenue"] * 100, 2)

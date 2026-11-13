@@ -16,3 +16,11 @@ class AnalystReport(BaseModel):
     risks: list[str] = Field(
         description="1 to 3 things that could make this view wrong"
     )
+
+class NewsReport(AnalystReport):
+    relevant_count: int = Field(
+        description="How many headlines were genuinely about this company and could affect its stock"
+    )
+    ignored_count: int = Field(
+        description="How many headlines were off-topic, generic or promotional and ignored"
+    )
