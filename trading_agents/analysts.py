@@ -7,6 +7,7 @@ from trading_agents.schemas import AnalystReport, NewsReport
 
 from trading_agents.fundamentals import build_fundamental_facts
 from trading_agents.yahoo import YahooClient
+from trading_agents.reflect import lessons_block
 
 TECHNICAL_SYSTEM = """You are the technical analyst on a trading desk.
 Use ONLY the indicator data provided. Do not invent numbers or use outside knowledge.
@@ -24,7 +25,7 @@ def cap_confidence(report, cap: float):
 def technical_analyst(ticker: str, indicators: dict) -> AnalystReport:
     llm = get_llm().with_structured_output(AnalystReport)
     report = llm.invoke([
-        ("system", TECHNICAL_SYSTEM),
+        ("system", TECHNICAL_SYSTEM + lessons_block("technical")),
         ("human", f"Ticker: {ticker}\nIndicators:\n{json.dumps(indicators, indent=2)}"),
     ])
     if indicators["volume_vs_20d_avg"] < 0.8:
@@ -47,7 +48,7 @@ You analyse the business and valuation only, not price charts."""
 def fundamental_analyst(ticker: str, facts: dict) -> AnalystReport:
     llm = get_llm().with_structured_output(AnalystReport)
     report = llm.invoke([
-                ("system", FUNDAMENTAL_SYSTEM),
+                ("system", FUNDAMENTAL_SYSTEM + lessons_block("fundamental")),
                 ("human", f"Ticker: {ticker}\nFacts:\n{json.dumps(facts, indent=2)}"),
             ])
     ratio = facts.get("pe_to_revenue_growth_ratio")
@@ -79,7 +80,7 @@ def news_analyst(ticker: str, company: str, headlines: list[dict]) -> NewsReport
     llm = get_llm().with_structured_output(NewsReport)
     report = llm.invoke(
         [
-            ("system", NEWS_SYSTEM),
+            ("system", NEWS_SYSTEM + lessons_block("news")),
             (
                 "human",
                 f"Ticker: {ticker} ({company})\n"

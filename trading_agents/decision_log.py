@@ -13,7 +13,7 @@ def _jsonable(value):
     return value.model_dump() if hasattr(value, "model_dump") else value
 
 
-def save_decision(state: dict) -> int:
+def save_decision(state: dict, model_tag: str | None = None) -> int:
     decision = state["decision"]
     outcome = state["outcome"]
     full_state = json.dumps({k: _jsonable(v) for k, v in state.items()})
@@ -30,7 +30,7 @@ def save_decision(state: dict) -> int:
             (
                 datetime.now(timezone.utc).isoformat(),
                 decision.ticker,
-                get_settings().openai_model,
+                model_tag or get_settings().openai_model,
                 decision.action,
                 decision.shares,
                 decision.entry_price,

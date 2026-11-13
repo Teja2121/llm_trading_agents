@@ -76,3 +76,14 @@ class FinalDecision(BaseModel):
     confidence: float
     risk_level: str
     rationale: str
+
+class Lesson(BaseModel):
+    scope: Literal["technical", "fundamental", "news", "risk", "trader", "general"] = Field(
+        description="Which part of the system this lesson should influence"
+    )
+    lesson: str = Field(
+        description="One or two sentences, stated as a hypothesis tied to the specific numbers involved"
+    )
+    worth_keeping: bool = Field(
+        description="False if the outcome was probably luck or noise, or nothing generalisable can be said"
+    )

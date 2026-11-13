@@ -8,6 +8,7 @@ from trading_agents.risk import (
 )
 from trading_agents.schemas import FinalDecision, RiskAssessment, TradeDecision
 from trading_agents.state import TradingState
+from trading_agents.reflect import lessons_block
 
 RISK_SYSTEM = """You are the risk manager on a trading desk.
 You do not decide direction; you decide how much risk is acceptable.
@@ -40,7 +41,7 @@ def risk_node(state: TradingState) -> dict:
         f"Market conditions (SPY, computed in code):\n{json.dumps(state['market'], indent=2)}\n\n"
         f"Analyst reports:\n{reports_text(state)}"
     )
-    assessment = llm.invoke([("system", RISK_SYSTEM), ("human", prompt)])
+    assessment = llm.invoke([("system", RISK_SYSTEM + lessons_block("risk")), ("human", prompt)])
 
     adjustments = []
     too_risky = assessment.risk_level == "high" or len(flags) >= 3
@@ -71,7 +72,7 @@ def trader_node(state: TradingState) -> dict:
         f"Research verdict:\n{outcome.model_dump_json(indent=2)}\n\n"
         f"Risk assessment:\n{assessment.model_dump_json(indent=2)}"
     )
-    trade = llm.invoke([("system", TRADER_SYSTEM), ("human", prompt)])
+    trade = llm.invoke([("system", TRADER_SYSTEM + lessons_block("trader")), ("human", prompt)])
 
     # ---- code guards: what must hold, whatever the LLM said ----
     adjustments = []

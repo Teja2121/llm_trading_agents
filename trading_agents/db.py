@@ -35,6 +35,20 @@ CREATE TABLE IF NOT EXISTS decisions (
     outcome_label      TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_decisions_ticker_time ON decisions (ticker, run_at);
+
+CREATE TABLE IF NOT EXISTS lessons (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    decision_id   INTEGER NOT NULL REFERENCES decisions(id),
+    created_at    TEXT NOT NULL,
+    ticker        TEXT NOT NULL,
+    as_of         TEXT NOT NULL,
+    scope         TEXT NOT NULL,
+    lesson        TEXT NOT NULL,
+    kept          INTEGER NOT NULL,
+    outcome_label TEXT NOT NULL,
+    return_pct    REAL NOT NULL,
+    UNIQUE (ticker, as_of)
+);
 """
 
 
