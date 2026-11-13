@@ -24,3 +24,17 @@ class NewsReport(AnalystReport):
     ignored_count: int = Field(
         description="How many headlines were off-topic, generic or promotional and ignored"
     )
+
+class DebateOutcome(BaseModel):
+    leaning: Literal["bullish", "bearish", "neutral"] = Field(
+        description="Which way the evidence leans after the debate"
+    )
+    conviction: float = Field(
+        description="0.0 to 1.0. Lower it if the sides were evenly matched or data was thin"
+    )
+    summary: str = Field(description="2-3 sentences explaining the verdict")
+    strongest_bull_point: str
+    strongest_bear_point: str
+    unresolved_questions: list[str] = Field(
+        description="1 to 3 things the available data could not settle"
+    )
